@@ -1,5 +1,5 @@
 -- generate enums 
-CREATE TYPE user_role AS ENUM ('admin', 'Manager', 'employee');
+CREATE TYPE user_role AS ENUM ('admin', 'manager', 'employee');
 -- BASE users Table (independent) 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
