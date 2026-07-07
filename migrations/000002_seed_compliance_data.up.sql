@@ -12,8 +12,8 @@ INSERT INTO role_permissions (role, permission_id) VALUES
 
 -- Manager can do everything an employee can
 INSERT INTO role_permissions (role, permission_id) VALUES 
-('Manager', (SELECT id FROM permissions WHERE name='compliance:read')),
-('Manager', (SELECT id FROM permissions WHERE name='compliance:write'));
+('manager', (SELECT id FROM permissions WHERE name='compliance:read')),
+('manager', (SELECT id FROM permissions WHERE name='compliance:write'));
 
 -- Admin gets the nuclear option: overrides
 INSERT INTO role_permissions (role, permission_id) VALUES 
