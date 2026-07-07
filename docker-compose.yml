@@ -1,0 +1,59 @@
+
+services:
+  # PostgreSQL Database 
+  postgres:
+    image: postgres:16-alpine
+    container_name: custodian_db
+    environment:
+      POSTGRES_USER: custodian
+      POSTGRES_PASSWORD: custodian
+      POSTGRES_DB: custodian
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - custodian_network
+    # Healthcheck ensures Postgres is fully ready to accept connections
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U custodian -d custodian"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  #  Redis Cache 
+  redis:
+    image: redis:7-alpine
+    container_name: custodian_cache
+    networks:
+      - custodian_network
+    # Healthcheck ensures Redis is responsive to pings
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Custodian Go Application 
+  custodian:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: custodian_app
+    ports:
+      - "8080:8080" 
+    env_file:
+      - .env # Correct syntax to inject your .env file
+    networks:
+      - custodian_network
+    depends_on:
+      postgres:
+        condition: service_healthy # Waits for Postgres healthcheck to pass
+      redis:
+        condition: service_healthy # Waits for Redis healthcheck to pass
+
+# Infrastructure Declarations 
+volumes:
+  pgdata: # Named volume ensures data survives container deletions and restarts
+
+networks:
+  custodian_network:
+    driver: bridge # Creates an isolated, private highway for your 3 services
