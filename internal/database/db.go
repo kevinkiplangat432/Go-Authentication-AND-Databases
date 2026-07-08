@@ -11,13 +11,13 @@ import (
 )
 
 // hold the connection pools
-type Infrastructure struct {
+type Store struct {
 	DB *pgxpool.Pool
 	Redis *redis.Client
 }
 
 // connect services initializes both postgres and redis
-func ConnectService(ctx context.Context, dbURL, redisURL string) (*Infrastructure, error) {
+func ConnectService(ctx context.Context, dbURL, redisURL string) (*Store, error) {
 
 	// confiugure postgress pooling
 	config, err := pgxpool.ParseConfig(dbURL)
@@ -56,7 +56,7 @@ func ConnectService(ctx context.Context, dbURL, redisURL string) (*Infrastructur
 	}
 	log.Println("redis client connected and listening to the local highway")
 
-	return &Infrastructure{
+	return &Store{
 		DB: dbPool,
 		Redis: redisClient,
 	}, nil

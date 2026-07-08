@@ -6,16 +6,17 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/kevinkiplangat432/custodian/internal/database"
+    
 )
+
 
 func main() {
     log.Println("Starting custodian AI compliance servise Engine")
 
     // create a structural master context that listens for the system cancellation
-    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    ctx, cancel := context.WithCancel(context.Background())
     defer cancel()
 
     // extract the variable from the env
@@ -33,7 +34,8 @@ func main() {
     }
     // gracefully drain pool lines before turning off power lines at termination
 
-    defer infra.DB.Close()  
+
+    defer infra.DB.Close()
     defer infra.Redis.Close()
 
     log.Printf("app container is fully listening on port %s inside the Matrix", appPort)
